@@ -1,0 +1,21 @@
+{
+  "name": "page-load-anatomy",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A dissectible model of what actually happens when a browser loads a page",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}
