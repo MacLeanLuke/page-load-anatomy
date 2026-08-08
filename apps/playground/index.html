@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page Load Anatomy — what actually happens before you see pixels</title>
+    <meta
+      name="description"
+      content="An interactive dissection of a page load. Change the network, the protocol, the caching, and watch every round trip move."
+    />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap">
+        <p class="eyebrow">Page load anatomy</p>
+        <h1>Most of a page load happens before a single byte of HTML arrives.</h1>
+        <p class="standfirst">
+          Every number below is counted round trips, not decoration. Change something on the left and
+          watch what actually moves.
+        </p>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="presets" aria-label="Scenarios">
+        <div class="preset-buttons" id="presets"></div>
+        <p class="preset-hint" id="preset-hint"></p>
+      </section>
+
+      <div class="bench">
+        <form class="controls" id="controls" aria-label="Connection and network controls">
+          <fieldset>
+            <legend>Network</legend>
+
+            <label>
+              <span>Round-trip time <output id="out-rtt"></output></span>
+              <input type="range" id="rtt" min="1" max="400" step="1" />
+            </label>
+
+            <label>
+              <span>Bandwidth <output id="out-bandwidth"></output></span>
+              <input type="range" id="bandwidth" min="1" max="1000" step="1" />
+            </label>
+
+            <label>
+              <span>Packet loss <output id="out-loss"></output></span>
+              <input type="range" id="loss" min="0" max="10" step="0.5" />
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Connection</legend>
+
+            <label>
+              <span>DNS</span>
+              <select id="dns">
+                <option value="cold">Cold — 4 round trips</option>
+                <option value="resolver-cached">Resolver cached — 1</option>
+                <option value="browser-cached">Browser cached — 0</option>
+              </select>
+            </label>
+
+            <label>
+              <span>TLS</span>
+              <select id="tls">
+                <option value="tls1.2-full">TLS 1.2 full — 2 RTT</option>
+                <option value="tls1.3-full">TLS 1.3 full — 1 RTT</option>
+                <option value="tls1.3-resumed">TLS 1.3 resumed — 1 RTT</option>
+                <option value="tls1.3-0rtt">TLS 1.3 0-RTT — 0</option>
+                <option value="none">None (plain HTTP)</option>
+              </select>
+            </label>
+
+            <label>
+              <span>HTTP version</span>
+              <select id="http">
+                <option value="http/1.1">HTTP/1.1 — 6 connections, queues</option>
+                <option value="h2">HTTP/2 — multiplexed</option>
+                <option value="h3">HTTP/3 — QUIC, one less round trip</option>
+              </select>
+            </label>
+
+            <label class="checkbox">
+              <input type="checkbox" id="cdn" />
+              <span>Serve from a CDN edge</span>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Page</legend>
+
+            <label>
+              <span>Document size <output id="out-doc"></output></span>
+              <input type="range" id="doc" min="2" max="120" step="1" />
+            </label>
+
+            <label>
+              <span>Subresources <output id="out-assets"></output></span>
+              <input type="range" id="assets" min="0" max="40" step="1" />
+            </label>
+
+            <label class="checkbox">
+              <input type="checkbox" id="blocking" checked />
+              <span>CSS and JS block first render</span>
+            </label>
+          </fieldset>
+
+          <div class="actions">
+            <button type="button" id="pin">Pin as baseline</button>
+            <button type="button" id="unpin" hidden>Clear baseline</button>
+          </div>
+        </form>
+
+        <section class="output" aria-live="polite">
+          <div class="metrics" id="metrics"></div>
+          <div class="chart" id="chart"></div>
+          <div class="legend" id="legend"></div>
+          <div class="baseline" id="baseline"></div>
+        </section>
+      </div>
+
+      <section class="mirror">
+        <h2>And here is this page, actually loading</h2>
+        <p class="standfirst">
+          The same drawing code, fed by <code>PerformanceResourceTiming</code> instead of the model.
+          These are real requests your browser just made, on your real connection.
+        </p>
+        <div class="chart" id="observed"></div>
+        <p class="note" id="observed-note"></p>
+      </section>
+    </main>
+
+    <footer class="wrap site-footer">
+      <p>
+        Built on <code>@page-load-anatomy/core</code> — 49 tests pinning the model to the specs.
+        <a href="https://github.com/MacLeanLuke/page-load-anatomy">Source</a>
+      </p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

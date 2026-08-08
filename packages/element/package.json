@@ -9,9 +9,17 @@
     ".": "./src/index.ts",
     "./auto": "./src/auto.ts"
   },
-  "sideEffects": ["./src/auto.ts"],
+  "sideEffects": [
+    "./src/auto.ts"
+  ],
   "dependencies": {
     "@page-load-anatomy/core": "0.1.0",
     "@page-load-anatomy/observe": "0.1.0"
+  },
+  "scripts": {
+    "build:standalone": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
   }
 }

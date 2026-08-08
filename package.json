@@ -17,6 +17,7 @@
     "typecheck": "tsc -b packages/core packages/observe packages/element"
   },
   "devDependencies": {
+    "jsdom": "^30.0.1",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   }
