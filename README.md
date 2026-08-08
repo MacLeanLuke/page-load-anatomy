@@ -57,26 +57,68 @@ Each of these is an assertion in the test suite, not a claim in a README:
 - **HTTP/3 saves exactly one round trip** over HTTP/2 — QUIC folds the transport and
   crypto handshakes together.
 
+## Two halves: predict, and observe
+
+The distinction matters, because they answer different questions.
+
+**`core` predicts.** Give it network conditions and a connection config, get a
+waterfall back. Good for "what would this cost on 3G from Sydney with a cold DNS
+cache?"
+
+**`observe` reports.** The browser already dissects every real request for you —
+`PerformanceResourceTiming` exposes `domainLookupStart/End`, `connectStart/End`,
+`secureConnectionStart`, `requestStart`, `responseStart`, `responseEnd`. Almost
+nobody looks. This turns those entries into the same span shape the simulator
+produces, so a measured request and a predicted one can be drawn by the same
+component and compared directly.
+
+It also handles the thing naive implementations get wrong: a cross-origin
+response without `Timing-Allow-Origin` has **every phase timing zeroed**. Drawing
+that as zero-length bars implies the request was instant, which is the opposite
+of what it means. Those entries are flagged as opaque instead.
+
+## Embedding it in another project
+
+`<pipe-anatomy>` is a custom element, not a framework component, so it drops into
+Next.js, Astro, Vite, or a plain `<script>` tag unchanged. Shadow DOM keeps the
+host page's CSS out.
+
+```html
+<script type="module">
+  import { definePipeAnatomy } from "@page-load-anatomy/element";
+  definePipeAnatomy();
+</script>
+
+<pipe-anatomy open limit="40"></pipe-anatomy>
+```
+
+Or the one-liner, which registers the element and mounts it for you:
+
+```js
+import "@page-load-anatomy/element/auto";
+```
+
+The panel then shows every request the host app makes, live — phases, negotiated
+protocol, transfer size, cache hits.
+
 ## Layout
 
 ```
-src/domain/
-  types.ts       network conditions, connection config, resources, spans
-  protocol.ts    round-trip accounting, slow start, concurrency limits
-  simulate.ts    assembles a waterfall and derives TTFB, first render, LCP
-  *.test.ts      34 tests pinning the model to the specs
+packages/
+  core/      protocol arithmetic. No UI, no network, no dependencies
+  observe/   real timings from PerformanceObserver, same span shape as core
+  element/   <pipe-anatomy> custom element
 ```
 
-The domain layer has no UI dependencies and no network access. It is a pure
-function from configuration to a timeline, which is what makes it testable — and
-what makes the visualization trustworthy.
+`core` is a pure function from configuration to a timeline, which is what makes
+it testable — and what makes the visualization trustworthy.
 
 ## Commands
 
 ```bash
 npm install
-npm test        # 34 tests over the protocol model
-npm run dev     # (UI in progress)
+npm test        # 49 tests across core and observe
+npm run typecheck
 ```
 
 ## Roadmap
