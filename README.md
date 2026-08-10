@@ -2,6 +2,8 @@
 
 A dissectible model of what actually happens between typing a URL and seeing pixels.
 
+**Live demo: [page-load-anatomy.vercel.app](https://page-load-anatomy.vercel.app)**
+
 Pull out a layer — DNS, TCP, TLS, HTTP, the render path — see it working on its
 own, then change one thing and watch what moves downstream.
 
@@ -117,7 +119,7 @@ it testable — and what makes the visualization trustworthy.
 
 ```bash
 npm install
-npm test        # 49 tests across core and observe
+npm test        # 58 tests across core, observe and element
 npm run typecheck
 ```
 
