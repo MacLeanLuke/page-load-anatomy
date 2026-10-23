@@ -13,5 +13,5 @@
     "@page-load-anatomy/observe": "0.1.0",
     "@page-load-anatomy/element": "0.1.0"
   },
-  "devDependencies": { "vite": "^7.0.0" }
+  "devDependencies": { "vite": "^7.3.7" }
 }
